@@ -2,6 +2,9 @@
 dat_unsync/
 # pycharm files
 .idea/
+# MAC OS sys files
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
