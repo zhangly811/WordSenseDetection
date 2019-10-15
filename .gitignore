@@ -1,6 +1,7 @@
 # large data folders
 dat_unsync/
-
+# pycharm files
+.idea/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
