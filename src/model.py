@@ -112,16 +112,16 @@ tfd = tfp.distributions
 
 
 flags.DEFINE_float(
-    "learning_rate", default=3e-4, help="Learning rate.")
+    "learning_rate", default=3e-4, help="Learning rate.") #3
 flags.DEFINE_integer(
-    "max_steps", default=180000, help="Number of training steps to run.")
+    "max_steps", default=50000, help="Number of training steps to run.")
 flags.DEFINE_integer(
     "num_topics",
-    default=50,
+    default=3,
     help="The number of topics.")
 flags.DEFINE_list(
     "layer_sizes",
-    default=["300", "300", "300"],
+    default=["10", "10", "10"],
     help="Comma-separated list denoting hidden units per layer in the encoder.")
 flags.DEFINE_string(
     "activation",
@@ -135,18 +135,18 @@ flags.DEFINE_float(
     "prior_initial_value", default=0.7, help="The initial value for prior.")
 flags.DEFINE_integer(
     "prior_burn_in_steps",
-    default=120000,
+    default=12000,
     help="The number of training steps with fixed prior.")
 flags.DEFINE_string(
     "data_dir",
-    default=os.path.join(os.getenv("TEST_TMPDIR", "/tmp"), "lda/data"),
+    default="/Users/linyingzhang/git/zhangly811/WordSenseDetection/dat_unsync/data", #"/tmp/lda/data"
     help="Directory where data is stored (if using real data).")
 flags.DEFINE_string(
     "model_dir",
-    default=os.path.join(os.getenv("TEST_TMPDIR", "/tmp"), "lda/"),
+    default="/Users/linyingzhang/git/zhangly811/WordSenseDetection/res", #"/tmp/lda/",
     help="Directory to put the model's fit.")
 flags.DEFINE_integer(
-    "viz_steps", default=10000, help="Frequency at which save visualizations.")
+    "viz_steps", default=1000, help="Frequency at which save visualizations.")
 flags.DEFINE_bool("fake_data", default=False, help="If true, uses fake data.")
 flags.DEFINE_bool(
     "delete_existing",
@@ -413,7 +413,7 @@ def newsgroups_dataset(directory, split_name, num_words, shuffle_and_repeat):
   """Return 20 newsgroups tf.data.Dataset."""
   data = np.load(download(directory, FILE_TEMPLATE.format(split=split_name)), allow_pickle=True, encoding="bytes")
   # The last row is empty in both train and test.
-  data = data[:-1]
+  # data = data[:-1]
 
   # Each row is a list of word ids in the document. We first convert this to
   # sparse COO matrix (which automatically sums the repeating words). Then,
