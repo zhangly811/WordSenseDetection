@@ -79,12 +79,12 @@ def run(word, num_topics, source, master_data_dir="../output/"):
         #plt.axis("off")
         #plt.show()
 
-    top_words_idx = np.array([topic[::-1] for topic in lda.components_.argsort(axis=1)])[:,:FLAGS.num_top_words]
+    top_words_idx = np.array([topic[::-1] for topic in lda.components_.argsort(axis=1)])[:,:num_top_words]
     top_words_in_topics = []
-    for topic in range(FLAGS.num_topics):
+    for topic in range(num_topics):
         top_words_in_topics.append(np.array([vocabulary[idx] for idx in top_words_idx[topic,:]]).reshape(1,-1))
-    top_words_in_topics = np.array(top_words_in_topics).reshape(FLAGS.num_topics, FLAGS.num_top_words)
-    for topic in range(FLAGS.num_topics):
+    top_words_in_topics = np.array(top_words_in_topics).reshape(num_topics, num_top_words)
+    for topic in range(num_topics):
         print("Topic {}: {}".format(topic, top_words_in_topics[topic,:]))
 
 
@@ -115,6 +115,7 @@ def run(word, num_topics, source, master_data_dir="../output/"):
 
         print ("Accuracy: ", np.mean(topic_assignment_per_doc == labels))
 
+    return res
 
 def main(argv):
     del argv  # unused
