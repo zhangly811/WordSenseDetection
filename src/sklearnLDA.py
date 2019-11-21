@@ -26,7 +26,8 @@ flags.DEFINE_string(
     help="Target word to disambiguate.")
 flags.DEFINE_string(
     "source",
-    default="Ped",  # "/tmp/lda/data"
+    #default="Ped",  # "/tmp/lda/data"
+    default="MSH",  # "/tmp/lda/data"
     help="The data source.")
 flags.DEFINE_string(
     "model_dir",
@@ -152,9 +153,9 @@ def main(argv):
         wordcloud = WordCloud(width=900, height=500, max_words=dataset.shape[1], relative_scaling=1,
                               normalize_plurals=False).generate_from_frequencies(freq)
 
-        plt.imshow(wordcloud, interpolation='bilinear')
-        plt.axis("off")
-        plt.show()
+        #plt.imshow(wordcloud, interpolation='bilinear')
+        #plt.axis("off")
+        #plt.show()
 
     top_words_idx = np.array([topic[::-1] for topic in lda.components_.argsort(axis=1)])[:,:FLAGS.num_top_words]
     top_words_in_topics = []
@@ -166,6 +167,7 @@ def main(argv):
 
 
     # evaluation
+    print(FLAGS.source, FLAGS.word)
     if FLAGS.source == "MSH" and FLAGS.word == "ventricle":
         trainlabels = np.loadtxt(os.path.join(data_dir, "train.labels"),dtype=np.str)
         testlabels = np.loadtxt(os.path.join(data_dir, "test.labels"), dtype=np.str)

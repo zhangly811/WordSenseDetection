@@ -267,7 +267,7 @@ class MyBagOfWords(object):
         abstract = abstract.replace("-", " ")
         abstract = abstract.replace("'", " ")
         abstract = abstract.replace(".", " ")
-        #abstract = re.sub("was", "is", abstract)
+        abstract = re.sub("was", "is", abstract)
         abstract = re.sub("<e>", " ", abstract)
         abstract = re.sub("</e>", " ", abstract)
         #abstract = abstract.replace("/", " ")
