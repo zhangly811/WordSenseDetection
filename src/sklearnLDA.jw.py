@@ -18,7 +18,7 @@ flags.DEFINE_integer(
 flags.DEFINE_string(
     "master_data_dir",
     #default="/Users/linyingzhang/git/zhangly811/WordSenseDetection/dat_unsync/output/",
-    default="..//output/",
+    default="../output/",
     help="Directory where data is stored (if using real data).")
 flags.DEFINE_string(
     "word",
@@ -31,7 +31,7 @@ flags.DEFINE_string(
 flags.DEFINE_string(
     "model_dir",
     #default="/Users/linyingzhang/git/zhangly811/WordSenseDetection/res",  # "/tmp/lda/",
-    default="../res",  # "/tmp/lda/",
+    default="../res/",  # "/tmp/lda/",
     help="Directory to put the model's fit.")
 
 FLAGS = flags.FLAGS
@@ -45,10 +45,7 @@ def load_dataset(directory, split_name):
 def main(argv):
     del argv  # unused
 
-<<<<<<< HEAD
     #data_dir = os.path.join(FLAGS.master_data_dir, "{}_{}_window10".format(FLAGS.word, FLAGS.source))
-=======
->>>>>>> 9e8f24b6c736861ae9b8ab7d47473ba320b9185a
     data_dir = os.path.join(FLAGS.master_data_dir, "{}_{}".format(FLAGS.word, FLAGS.source))
 
     with open(os.path.join(data_dir, "dict.pkl"), "rb") as f:
