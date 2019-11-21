@@ -16,7 +16,8 @@ flags.DEFINE_integer(
     help="The number of most likely words to display in a topic.")
 flags.DEFINE_string(
     "master_data_dir",
-    default="/Users/linyingzhang/git/zhangly811/WordSenseDetection/dat_unsync/output/",
+    #default="/Users/linyingzhang/git/zhangly811/WordSenseDetection/dat_unsync/output/",
+    default="..//output/",
     help="Directory where data is stored (if using real data).")
 flags.DEFINE_string(
     "word",
@@ -28,7 +29,8 @@ flags.DEFINE_string(
     help="The data source.")
 flags.DEFINE_string(
     "model_dir",
-    default="/Users/linyingzhang/git/zhangly811/WordSenseDetection/res",  # "/tmp/lda/",
+    #default="/Users/linyingzhang/git/zhangly811/WordSenseDetection/res",  # "/tmp/lda/",
+    default="../res",  # "/tmp/lda/",
     help="Directory to put the model's fit.")
 
 FLAGS = flags.FLAGS
@@ -48,7 +50,8 @@ def load_dataset(directory, split_name):
 def main(argv):
     del argv  # unused
 
-    data_dir = os.path.join(FLAGS.master_data_dir, "{}_{}_window10".format(FLAGS.word, FLAGS.source))
+    #data_dir = os.path.join(FLAGS.master_data_dir, "{}_{}_window10".format(FLAGS.word, FLAGS.source))
+    data_dir = os.path.join(FLAGS.master_data_dir, "{}_{}".format(FLAGS.word, FLAGS.source))
 
     with open(os.path.join(data_dir, "dict.pkl"), "rb") as f:
         words_to_idx = pickle.load(f)
