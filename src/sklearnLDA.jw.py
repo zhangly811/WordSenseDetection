@@ -1,10 +1,11 @@
 from sklearn.decomposition import LatentDirichletAllocation
 import os
 import numpy as np
-import pandas as pd
 import pickle
 from absl import flags
 from absl import app
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
 
 flags.DEFINE_integer(
     "num_topics",
@@ -21,11 +22,11 @@ flags.DEFINE_string(
     help="Directory where data is stored (if using real data).")
 flags.DEFINE_string(
     "word",
-    default="cold",  # "/tmp/lda/data"
+    default="ventricle",  # "/tmp/lda/data"
     help="Target word to disambiguate.")
 flags.DEFINE_string(
     "source",
-    default="MSH",  # "/tmp/lda/data"
+    default="Ped",  # "/tmp/lda/data"
     help="The data source.")
 flags.DEFINE_string(
     "model_dir",
@@ -41,16 +42,13 @@ def load_dataset(directory, split_name):
     data = np.array([list(word) for word in data], dtype=np.float32)
     return data
 
-#
-# FLAGS.master_data_dir = "/Users/linyingzhang/git/zhangly811/WordSenseDetection/dat_unsync/output/"
-# FLAGS.word = "ventricle"
-# FLAGS.source = "MSH"
-# FLAGS.num_topics = 2
-
 def main(argv):
     del argv  # unused
 
+<<<<<<< HEAD
     #data_dir = os.path.join(FLAGS.master_data_dir, "{}_{}_window10".format(FLAGS.word, FLAGS.source))
+=======
+>>>>>>> 9e8f24b6c736861ae9b8ab7d47473ba320b9185a
     data_dir = os.path.join(FLAGS.master_data_dir, "{}_{}".format(FLAGS.word, FLAGS.source))
 
     with open(os.path.join(data_dir, "dict.pkl"), "rb") as f:
@@ -61,9 +59,10 @@ def main(argv):
     for word, idx in words_to_idx.items():
         vocabulary[idx] = word
 
-    dataset_train = load_dataset(data_dir, "train")
-    dataset_test = load_dataset(data_dir, "test")
-    dataset = np.concatenate((dataset_train, dataset_test), axis=0)
+    dataset = load_dataset(data_dir, "train")
+    if FLAGS.source == "WSH":
+        dataset_test = load_dataset(data_dir, "test")
+        dataset = np.concatenate((dataset, dataset_test), axis=0)
 
     lda = LatentDirichletAllocation(n_components=FLAGS.num_topics, random_state=7)
     lda.fit(dataset)
@@ -72,14 +71,28 @@ def main(argv):
     topic_prob_per_doc = lda.transform(dataset)
     topic_assignment_per_doc = topic_prob_per_doc.argmax(axis=1)
 
+    for topic in range(FLAGS.num_topics):
+        freq = {}
+        for idx in range(1, len(vocabulary)):
+            if vocabulary[idx] != FLAGS.word:
+                freq[vocabulary[idx]] = lda.components_[topic, idx]
+
+        wordcloud = WordCloud(width=900, height=500, max_words=dataset.shape[1], relative_scaling=1,
+                              normalize_plurals=False).generate_from_frequencies(freq)
+
+        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.axis("off")
+        plt.show()
+
     top_words_idx = np.array([topic[::-1] for topic in lda.components_.argsort(axis=1)])[:,:FLAGS.num_top_words]
     top_words_in_topics = []
-
     for topic in range(FLAGS.num_topics):
         top_words_in_topics.append(np.array([vocabulary[idx] for idx in top_words_idx[topic,:]]).reshape(1,-1))
     top_words_in_topics = np.array(top_words_in_topics).reshape(FLAGS.num_topics, FLAGS.num_top_words)
     for topic in range(FLAGS.num_topics):
         print("Topic {}: {}".format(topic, top_words_in_topics[topic,:]))
+
+
     # evaluation
     if FLAGS.source == "MSH" and FLAGS.word == "ventricle":
         trainlabels = np.loadtxt(os.path.join(data_dir, "train.labels"),dtype=np.str)
