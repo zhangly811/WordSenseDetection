@@ -156,6 +156,7 @@ class GetPubmed(object):
 class MyBagOfWords(object):
     def __init__(self, args, trainP=0.7):
         self.the_word = wnl.lemmatize(args.word)
+        self.n_of_topics = args.n_of_topics
         self.source = args.source
         self.InpFil = args.InpFil
         self.outname = args.outname
@@ -267,7 +268,7 @@ class MyBagOfWords(object):
         abstract = abstract.replace("-", " ")
         abstract = abstract.replace("'", " ")
         abstract = abstract.replace(".", " ")
-        abstract = re.sub("was", "is", abstract)
+        #abstract = re.sub("was", "is", abstract)
         abstract = re.sub("<e>", " ", abstract)
         abstract = re.sub("</e>", " ", abstract)
         #abstract = abstract.replace("/", " ")
@@ -276,10 +277,11 @@ class MyBagOfWords(object):
         # abstract = abstract.translate(str.maketrans(string.punctuation, ' ')) # remove punctuations
         tokens = [token.lower() for token in word_tokenize(
             abstract)]  # lowercase and tokenize
+        #tokens = [w for w in tokens if not w in stop_words]
         lemmatized_words = [wnl.lemmatize(token)
                             for token in tokens]  # limmatize
-        # remove stop words
         lemmatized_words = [w for w in lemmatized_words if not w in stop_words]
+        # remove stop words
         # self.Data.append(lemmatized_words)
         return lemmatized_words
 
@@ -330,8 +332,9 @@ class MyBagOfWords(object):
 			word_array.append(key)
 		word_array = np.array(word_array, dtype='float64')
 		"""
-        word_window = lemmatized_words[max(
-            0, idx - 10): min(idx + 10, len(lemmatized_words))]
+        #print(self.n_of_nearby_word)
+        word_window = lemmatized_words[max(0, idx - self.n_of_nearby_word): min(idx + self.n_of_nearby_word, len(lemmatized_words))]
+        #word_window = lemmatized_words[max(0, idx - 30): min(idx + 30, len(lemmatized_words))]
         word_array = np.zeros(len(self.KeptWords))
         for i in range(0, len(word_window)):
             word = word_window[i]
@@ -388,7 +391,7 @@ class MyBagOfWords(object):
             return
 
         word_window = lemmatized_words[max(
-            0, idx - 10): min(idx + 10, len(lemmatized_words))]
+            0, idx - self.n_of_nearby_word): min(idx + self.n_of_nearby_word, len(lemmatized_words))]
         word_array = np.zeros(len(self.KeptWords))
         for i in range(0, len(word_window)):
             word = word_window[i]
@@ -402,21 +405,23 @@ class MyBagOfWords(object):
     # def generatewordvector(self)
 
 class arguments:
-    def __init__(self, word, InpFil, outname, trainP, n_of_nearby_word, source):
+    def __init__(self, word, n_of_topics, InpFil, outname, trainP, n_of_nearby_word, source):
         self.InpFil = InpFil
         self.outname = outname
         self.trainP = trainP
         self.word = word
         self.n_of_nearby_word = n_of_nearby_word
         self.source = source
+        self.n_of_topics = n_of_topics
 
-def DoBagOfWords(word, source, n_of_nearby_word = 10):
+def DoBagOfWords(word, source, n_of_topics, InpFil, n_of_nearby_word = 10):
     if source == "MSH":
-        args = arguments(word, "../MSHCorpus/%s_pmids_tagged.arff"%(word), "../output/%s_MSH"%word, 0.7, 10, "MSH")
+        #args = arguments(word, n_of_topics, "../MSHCorpus/%s_pmids_tagged.arff"%(word), "../output/%s_MSH"%word, 0.7, n_of_nearby_word, "MSH")
+        args = arguments(word, n_of_topics, InpFil, "../output/%s_MSH"%word, 0.7, n_of_nearby_word, "MSH")
         ins = MyBagOfWords(args)
         ins.run()
-    elif source == "Pediatrics":
-        args = arguments(word, "../dat/Pediatrics.Abs.txt", "../output/%s_Ped"%word, None, 10, "Ped")
+    elif source == "Ped":
+        args = arguments(word, n_of_topics, "../dat/Pediatrics.Abs.txt", "../output/%s_Ped"%word, None, n_of_nearby_word, "Ped")
         ins = MyBagOfWords(args)
         ins.run()
     return ins
